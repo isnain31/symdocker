@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+        nginx_server:
+             depends_on:
+                    - phpapp_sym5
+             image: nginx:alpine
+             container_name: nginx_server
+             volumes:
+                 - ./code/public/api_5:/var/www/backend
+                 - ./nginx/conf.d:/etc/nginx/conf.d
+             ports:
+                 - 8080:80
+                 - 443:443 
+             networks:
+                 - app-network
+        
+        phpapp_sym5: 
+             image: php:7.4-fpm-alpine
+             container_name: php_fpm_symfony5_app
+             volumes:
+                     - ./code/public/api_5:/var/www/backend
+             networks:
+                     - app-network
+
+        composer:
+             image: composer:1.9
+             command: ['composer', 'install']
+             volumes:
+                     - ./code/public/api_5:/app
+               
+networks:
+  app-network:
+    driver: bridge
